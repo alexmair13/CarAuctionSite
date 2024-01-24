@@ -1,8 +1,30 @@
 import ShortCarDetails from "../components/shortCarDetails";
 import { Outlet, Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import axios from 'axios';
 
 
 export const BuyingPage = () => {
+
+    const [carData, setCarData] = useState([]);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await axios.get('http://localhost:22502/auctions');
+            setCarData(response.data);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
+
+       const carElements = carData.map((car) => (
+         <ShortCarDetails key={car.CarID} image='pictures/porsche911.jpeg' carMake={car.Make} carModel={car.Model}/>
+       ));
+
     return (
         <>
          <div className=''>
@@ -13,13 +35,9 @@ export const BuyingPage = () => {
             </div>
             <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 p-4'>
                 <Link to="/fullCarDetailsPage">
-                    <ShortCarDetails image='pictures/porsche911.jpeg' carName='Porsche 911' price='50,000' time='1:00:00'> </ShortCarDetails>
+                    {carElements}
                 </Link>
-                <ShortCarDetails image='pictures/porsche911.jpeg' carName='Porsche 911'> </ShortCarDetails>
-                <ShortCarDetails image='pictures/porsche911.jpeg' carName='Porsche 911'> </ShortCarDetails>
-                <ShortCarDetails image='pictures/porsche911.jpeg' carName='Porsche 911'> </ShortCarDetails>
-                <ShortCarDetails image='pictures/porsche911.jpeg' carName='Porsche 911'> </ShortCarDetails>
-                <ShortCarDetails image='pictures/porsche911.jpeg' carName='Porsche 911'> </ShortCarDetails>
+                
             </div>
         </div>
             <Outlet/>

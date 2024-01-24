@@ -12,7 +12,7 @@ import { FullCarDetailsPage } from './pages/FullCarDetailsPage';
 function App() {
   return (
     <>
-    <body className='bg-gray-950 min-h-screen'>
+    <div className='bg-gray-950 min-h-screen'>
      <BrowserRouter>
       <Routes>
         <Route path="/" element={<NavBar />}>
@@ -25,7 +25,7 @@ function App() {
         </Route>
       </Routes>
      </BrowserRouter>
-     </body>
+     </div>
     </>
   )
 }
