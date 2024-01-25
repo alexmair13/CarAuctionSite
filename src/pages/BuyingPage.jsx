@@ -22,7 +22,7 @@ export const BuyingPage = () => {
       }, []);
 
        const carElements = carData.map((car) => (
-         <ShortCarDetails key={car.CarID} image='pictures/porsche911.jpeg' carMake={car.Make} carModel={car.Model}/>
+         <ShortCarDetails key={car.CarID} image={car.Picture} carMake={car.Make} carModel={car.Model}/>
        ));
 
     return (
