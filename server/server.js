@@ -3,11 +3,13 @@ import mysql from 'mysql2';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
+import compression from 'compression';
 
 dotenv.config();
 const app = express();
 const port = 22502;
 app.use(cors());
+app.use(compression())
 
 
 const db = mysql.createConnection({
@@ -40,25 +42,45 @@ app.listen(port, () => {
 });
 
 app.get('/auctions', (req, res)=> {
-    const sql = 'SELECT Auctions.*, Cars.Make, Cars.Model, Cars.Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
+    const sql = 'SELECT Auctions.*, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
     db.query(sql, (err, data)=> {
         if(err) return res.json(err);
-        return res.json(data);
+         const record = data[0];
+            console.log(record)
+            const mappedData = data.map(record => {
+                const imageData = record.Picture.toString('base64');
+                const { CarID, Make, Model } = record;
+                return {
+                    CarID,
+                    Make,
+                    Model,
+                    Picture: imageData,
+                };
+            });
+    
+            return res.json(mappedData);
     })
 })
-
-app.get('/test', (req, res) => {
-    const testSql = 'SELECT * FROM Auctions LIMIT 5';
-    db.query(testSql, (err, data) => {
-      if (err) {
-        console.error('Error executing test SQL:', err);
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
-  
-      return res.json(data);
+app.get('/carDetails/:carID', (req, res) => {
+    const carID = req.params.carID;
+    console.log("car ID is: " + carID);
+    const sql = 'SELECT * FROM Cars WHERE CarID = ?';
+    
+    db.query(sql, [carID], (err, result) => {
+        if (err) {
+            console.error('Error fetching car details:', err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            if (result.length > 0) {
+                const carDetails = result[0];
+                res.status(200).json(carDetails);
+            } else {
+                res.status(404).send('Car not found');
+            }
+        }
     });
-  });
-  
+});
+
   app.post('/addCar', (req, res) => {
     const {make, model, year, colour, mileage, description} = req.body;
     const imageBuffer = req.file.buffer;
@@ -79,8 +101,14 @@ app.get('/test', (req, res) => {
 
     const CarID = req.params.CarID;
     let startDateTime = new Date();
-    const endDateTime = new Date(startDateTime.setDate(startDateTime.getDate() + 7)).toISOString().slice(0, 19).replace('T', ' ');
+    let endDateTime = new Date();
+
+    endDateTime.setDate(startDateTime.getDate() + 7);
+    endDateTime = endDateTime.toISOString().slice(0, 19).replace('T', ' ');
     startDateTime = startDateTime.toISOString().slice(0, 19).replace('T', ' ');
+
+    console.log("Start Date:", startDateTime);
+    console.log("End Date:", endDateTime);
     
     const sql = 'INSERT INTO Auctions (CarID, EndDateTime, StartDateTime) VALUES (?, ?, ?)';
     db.query(sql, [CarID , endDateTime, startDateTime], (err, result) => {
