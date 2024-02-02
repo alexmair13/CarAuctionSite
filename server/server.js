@@ -42,37 +42,50 @@ app.listen(port, () => {
 });
 
 app.get('/auctions', (req, res)=> {
-    const sql = 'SELECT Auctions.*, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
+    const sql = 'SELECT Auctions.StartDateTime, Auctions.EndDateTime, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
     db.query(sql, (err, data)=> {
-        if(err) return res.json(err);
-         const record = data[0];
-            console.log(record)
-            const mappedData = data.map(record => {
-                const imageData = record.Picture.toString('base64');
-                const { CarID, Make, Model } = record;
-                return {
-                    CarID,
-                    Make,
-                    Model,
-                    Picture: imageData,
-                };
-            });
-    
-            return res.json(mappedData);
+        if(err) {
+            console.error('Error fetching auction and car details:', err);
+            res.status(500).send('Internal Server Error');
+        }
+        data.forEach((result) => {
+          
+          if (result.Picture) {
+            const base64Image = result.Picture.toString('base64');
+            result.Picture = base64Image;
+          }
+        });
+            return res.json(data);
     })
 })
+
+app.get('/singleAuction/:carID', (req, res)=> {
+  const carID = req.params.carID;
+  const sql = 'SELECT Auctions.* FROM Auctions WHERE CarID = ?';
+  db.query(sql, [carID],(err, data) => {
+      if(err) {
+          console.error('Error fetching auction details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+          res.status(200).json(data);
+  })
+})
+
+
 app.get('/carDetails/:carID', (req, res) => {
     const carID = req.params.carID;
     console.log("car ID is: " + carID);
     const sql = 'SELECT * FROM Cars WHERE CarID = ?';
     
-    db.query(sql, [carID], (err, result) => {
+    db.query(sql, [carID], (err, data) => {
         if (err) {
             console.error('Error fetching car details:', err);
             res.status(500).send('Internal Server Error');
         } else {
-            if (result.length > 0) {
-                const carDetails = result[0];
+            if (data.length > 0) {
+                const carDetails = data[0];
+                const imageData = carDetails.Picture.toString('base64');
+                carDetails.PictureBase64 = imageData
                 res.status(200).json(carDetails);
             } else {
                 res.status(404).send('Car not found');
