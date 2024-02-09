@@ -8,6 +8,7 @@ import { SellingPage } from './pages/SellingPage';
 import { FavouritesPage } from './pages/FavouritesPage';
 import { AdminPage } from './pages/AdminPage';
 import { FullCarDetailsPage } from './pages/FullCarDetailsPage';
+import { LoginPage } from './pages/LoginPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="favouritesPage" element={<FavouritesPage/>}/>
           <Route path="adminPage" element={<AdminPage/>}/>
           <Route path="fullCarDetailsPage" element={<FullCarDetailsPage/>}/>
+          <Route path="loginPage" element={<LoginPage/>}/>
         </Route>
       </Routes>
      </BrowserRouter>
