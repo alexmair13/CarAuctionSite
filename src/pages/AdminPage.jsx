@@ -15,7 +15,7 @@ export const AdminPage = () => {
                     <input type="text" className="w-full p-2 mb-2 rounded-md text-black" />
                     <label>Password:</label>
                     <input type="password" className="w-full p-2 mb-2 rounded-md text-black" />
-                    <button type="button" onclick="">Submit</button>
+                    <button type="button">Submit</button>
                 </form>
             </div>
             </div>

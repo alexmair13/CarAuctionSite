@@ -5,14 +5,30 @@ import cors from 'cors';
 import multer from 'multer';
 import compression from 'compression';
 import bcrypt from 'bcrypt';
+import passport from 'passport';
+import session from 'express-session';
+import LocalStrategy from 'passport-local'
 
 dotenv.config();
 const app = express();
 const port = 22502;
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  methods: ["POST", "GET"],
+  credentials: true
+}
+));
 app.use(compression())
 
+app.use(session({
+  secret: "secretkey",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {secure: false}
+}))
 
+app.use(passport.initialize())
+app.use(passport.session())
 
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -36,7 +52,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(upload.single('carImages'));
 
 app.get("/", (req,res) => {
-    res.json("Backend server")
+    if(req.session.username) {
+      return res.json({valid: true, username: req.session.username})
+    } else {
+      return res.json({valid: false})
+    }
 })
 
 app.listen(port, () => {
@@ -136,17 +156,18 @@ app.get('/carDetails/:carID', (req, res) => {
     });
   });
 
-  app.post('/placeBid/:carID/:bid', (req, res) => {
+  app.post('/placeBid/:carID/:bid/:userID', (req, res) => {
     const carID = req.params.carID;
     const bid  = req.params.bid;
+    const userID = req.params.userID;
 
-    const sql = 'UPDATE Auctions SET WinningBid = ? WHERE CarID = ?';
-    db.query(sql, [bid, carID], (err, result) => {
+    const sql = 'UPDATE Auctions SET WinningBid = ?, WinningUserID = ? WHERE CarID = ?';
+    db.query(sql, [bid, userID, carID], (err, result) => {
       if (err) {
         console.error('Error placing bid:', err);
         res.status(500).send('Internal Server Error');
       } else {
-        console.log('Bid placed' + carID + " bid: " + bid );
+        console.log('Bid placed' + carID + " bid: " + bid + " by userID: " + userID);
         res.status(200).json({ message: 'Bid placed'});
       }
     });
@@ -173,31 +194,84 @@ app.get('/carDetails/:carID', (req, res) => {
     });
   });
 
-  app.post('/login', (req, res)=> {
-    const {username, password} = req.body;
+// https://medium.com/@prashantramnyc/node-js-with-passport-authentication-simplified-76ca65ee91e5
 
-    const sql = 'SELECT * FROM Users WHERE Username = ?';
-    db.query(sql, [username],(err, data) => {
-        if(err) {
-            console.error('Error fetching auction details:', err);
-            res.status(500).send('Internal Server Error');
-        }
-        if (data === 0) {
-          res.status(404).send("User not found");
-        }
-        const user = data[0]
+ function authUser(username, password, done){
+  const sql = 'SELECT * FROM Users WHERE Username = ?';
+  db.query(sql, [username],(err, data) => {
+      if(err) {
+          console.error('Error fetching auction details:', err);
+      }
+      if (data.length === 0) {
+        console.log("User not found");
+        return;
+      }
+      const user = data[0]
 
-          bcrypt.compare(password, user.Password, function(err, result) {
-            if (result) {
-                console.log("Password matched, user found");
-                res.status(200).json(user);
-            } else {
-              console.log("Passwords don't match");
-            }
-            
-            if (err) {
-              console.log("Error matching password");
-            }
-          });
-    })
+        bcrypt.compare(password, user.Password, function(err, result) {
+          if (result) {
+            console.log(`Value of "User" in authUser function ----> ${username}`)         //passport will populate, user = req.body.username
+            console.log(`Value of "Password" in authUser function ----> ${password}`)
+              console.log("Password matched, user found");
+              let authenticated_user = {id: user.UserID, name: user.Username}
+              console.log("User is: ", authenticated_user);
+              return done (null, authenticated_user)
+          } else {
+            console.log("Passwords don't match");
+            return;
+          }
+        });
   })
+}
+passport.use(new LocalStrategy (authUser))
+
+passport.serializeUser((user, done) => {
+  console.log(`--------> Serialize User`)
+    console.log(user)     
+  done(null, user.id)
+})
+passport.deserializeUser((id, done) => {
+  console.log("---------> Deserialize Id")
+  console.log(id)
+  
+  db.query('SELECT * FROM Users WHERE UserID = ?', [id], (err, data) => {
+    if (err) {
+      console.error('Error fetching user details:', err);
+      return done(err);
+    }
+    if (data.length === 0) {
+      return done(new Error('User not found'));
+    }
+    const user = data[0];
+    return done(null, user);
+  });
+});
+
+
+
+  app.post('/login', passport.authenticate('local'), (req, res) =>{
+    if(req.user) {
+      console.log("please work: ", req.user.name);
+      req.session.user = req.user.name;
+      req.session.userid = req.user.id;
+      res.status(200).json({ 
+        login: true,
+        message: 'Logged In',
+        username: req.session.user,
+        userID: req.session.userid
+      });
+    } else {
+      res.status(500).json({
+        login: false,
+        message: 'failed',
+        user: null
+      })
+    }
+  });
+
+  app.delete("/logout", (req,res) => {
+    req.logOut()
+    res.status(200).json({ message: 'Logged out'});
+    console.log(`-------> User Logged out`)
+ })
+ 

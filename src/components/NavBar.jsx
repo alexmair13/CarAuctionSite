@@ -1,7 +1,11 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const NavBar = () => {
+
   return (
     <>
     <nav>
@@ -23,7 +27,7 @@ const NavBar = () => {
         <Link to="/adminPage">Admin </Link>
       </li>
       <li>
-        <Link to="/loginPage">Login </Link>
+        <Link to="/loginPage">Account</Link>
       </li>
     </div>
   </ul>

@@ -35,7 +35,7 @@ export const FullCarDetailsPage = () =>  {
   }, [carID]);
 
 
-const auctionTimer = singleAuctionDetails.map((auction) => {
+const auctionTimer = singleAuctionDetails.map((auction, index) => {
     const date1 = new Date();
     const date2 = new Date(auction.EndDateTime);
     const diff = date2 - date1;
@@ -44,7 +44,7 @@ const auctionTimer = singleAuctionDetails.map((auction) => {
         if (completed) {
           
           return (
-            <div className='flex flex-col items-center pt-4'>
+            <div className='flex flex-col items-center pt-4' key={auction.CarID}>
                     <div>
                         <p className='bg-white text-red-600 border rounded-xl p-2'>
                         Auction Ended
@@ -55,7 +55,7 @@ const auctionTimer = singleAuctionDetails.map((auction) => {
         } else {
           
           return (
-            <div className='flex flex-col items-center'>
+            <div className='flex flex-col items-center' key={auction.CarID}>
                 {zeroPad(days)}:{zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
                 <div>
                     <button onClick={() => setOpenPopup(true)} className='bg-tan text-racing-green text-xl border rounded-xl p-2 transition duration-700 ease-in-out hover:opacity-60'>
@@ -69,7 +69,7 @@ const auctionTimer = singleAuctionDetails.map((auction) => {
       };
 
     return (
-        <div className='flex flex-col  items-center pt-4'>
+        <div className='flex flex-col  items-center pt-4' key={index}>
             <div className='flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-lg w-1/3'>
                 <p className=''>£{auction.WinningBid}</p>
                 <Countdown key={auction.CarID} date={Date.now() + diff} renderer={renderer} />
@@ -82,19 +82,21 @@ const auctionTimer = singleAuctionDetails.map((auction) => {
         const convImg = "data:image/jpeg;base64,"+image;
         return convImg;
     }
+    
     const convertedCarPicutre = convertImg(carDetails.PictureBase64);
 
     return (
-        <>    
+        <>  
         {auctionTimer}
-        <div className='flex flex-col items-center pt-6'>
+        <div className='flex flex-col items-center pt-4'>
             <p className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-lg w-1/3"> 
                 {carDetails.Make} {carDetails.Model}
             </p>
         </div>
         <div className='flex flex-col items-center pt-4'>
-            <div className='bg-racing-green rounded-xl p-1 border border-tan lg:w-1/2 lg:h-1/2 sm:w-2/3 sm:h-2/3'>
-                <img className='content-fit' src={convertedCarPicutre}></img>
+            <div className='bg-racing-green rounded-xl p-1 border border-tan lg:h-2/3 md:w-3/4 sm:w-full sm:h-2/3 relative'>
+                <img className='content-fit' src={convertedCarPicutre} alt={`${carDetails.Make} ${carDetails.Model}`}></img>
+                <button class="absolute top-2 right-2 bg-racing-green text-tan p-2 rounded-xl m-2 border border-tan transition duration-700 ease-in-out hover:opacity-60">Favourite</button>
             </div>
         </div>
         <div className='flex flex-col items-center pt-4'>

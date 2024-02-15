@@ -2,9 +2,14 @@
 import React from 'react'
 import axios from 'axios';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
 
 const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
     const [errorMessage, setErrorMessage] = useState('');
+
+    const [cookies] = useCookies(['cookieName', 'cookieID']);
+    const username = cookies.cookieName;
+    const userID = cookies.cookieID;
 
   const handlelosePopUp = (e) => {
     if (e.target.id === 'ModelContainer') {
@@ -21,7 +26,7 @@ const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
 
     try {
         
-      await axios.post('http://localhost:22502/placeBid/' + carID + "/" + bid);
+      await axios.post('http://localhost:22502/placeBid/' + carID + "/" + bid + "/" + userID);
       alert("You have successfully placed a bid!");
       closePopUp();
       location.reload();
