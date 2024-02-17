@@ -11,19 +11,19 @@ export const LandingPage = () => {
         <>
         <div className='flex justify-center pt-6'>
             <div className='flex justify-center p-4 text-xl bg-racing-green rounded-xl border border-tan w-1/2'>
-                <h2 className='text-tan'>Welcome {username} ID: {userID}</h2>
+                <h2 className='text-tan'>Welcome {username}</h2>
             </div>
         </div>
         <div className='flex justify-center pt-6 min-h-screen'>
-            <div className='grid lg:grid-cols-3 sm:grid-cols-1'>
+            <div className='grid md:grid-cols-3 sm:grid-cols-1'>
                 <Link to="/buyingPage">
                     <HomePageCard text="Buy" image="pictures/Enzo2.jpeg"></HomePageCard>
                 </Link>
                 <Link to="/sellingPage">
                     <HomePageCard text="Sell" image="pictures/Enzo2.jpeg"></HomePageCard>
                 </Link>
-                <Link to="/favouritesPage">
-                    <HomePageCard text="Favourites" image="pictures/Enzo2.jpeg"></HomePageCard>
+                <Link to="/myAuctions">
+                    <HomePageCard text="MyAuctions" image="pictures/Enzo2.jpeg"></HomePageCard>
                 </Link>
             </div>
             </div>

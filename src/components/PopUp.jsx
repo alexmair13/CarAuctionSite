@@ -3,8 +3,15 @@ import React from 'react'
 import axios from 'axios';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    navigate('/loginPage');
+  };
+
     const [errorMessage, setErrorMessage] = useState('');
 
     const [cookies] = useCookies(['cookieName', 'cookieID']);
@@ -22,6 +29,10 @@ const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
     const formData = new FormData(e.target);
     const bid = formData.get('bid');
 
+    if (!username) {
+      console.log(username)
+      setErrorMessage('You must be logged in to place a bid, either log in or create a new account in the Account section');
+    } else {
     if (highestBid <= bid -100) {
 
     try {
@@ -39,12 +50,15 @@ const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
     setErrorMessage('The bid must be higher than the current bid value by at least £100');
   }
 }
+}
   if (openPopUp !== true) return null
 
   
 
   return (
-    <div id='ModelContainer' onClick={handlelosePopUp} className='fixed inset-0 bg-black flex justify-center items-center bg-opacity-20 backdrop-blur-sm'>
+    <>
+    {cookies.cookieName ? ( 
+      <div id='ModelContainer' onClick={handlelosePopUp} className='fixed inset-0 bg-black flex justify-center items-center bg-opacity-20 backdrop-blur-sm'>
       <div className='p-2 bg-racing-green w-10/12 md:w-1/2 lg:1/3 shadow-inner rounded-xl text-tan border border-tan'>
         <div className='w-full p-3'>
           <h2 className='text-center text-xl pb-4'>
@@ -65,6 +79,20 @@ const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
         </div>
       </div>
     </div>
+    ) : (
+      <div id='ModelContainer' onClick={handlelosePopUp} className='fixed inset-0 bg-black flex justify-center items-center bg-opacity-20 backdrop-blur-sm'>
+        <div className='p-2 bg-racing-green w-10/12 md:w-1/2 lg:1/3 shadow-inner rounded-xl text-tan border border-tan'>
+          <div className='w-full p-3'>
+            <h2 className='text-center text-xl pb-4'>
+                You must be logged in to place a bid
+            </h2>
+              <button onClick={handleRedirect} className="bg-tan text-racing-green rounded-xl p-2 transition duration-700 ease-in-out hover:opacity-60">Click here to Login or Register</button>
+          </div>
+        </div>
+      </div>
+    ) 
+    }
+    </>
   )
 }
 

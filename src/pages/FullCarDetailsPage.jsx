@@ -94,9 +94,9 @@ const auctionTimer = singleAuctionDetails.map((auction, index) => {
             </p>
         </div>
         <div className='flex flex-col items-center pt-4'>
-            <div className='bg-racing-green rounded-xl p-1 border border-tan lg:h-2/3 md:w-3/4 sm:w-full sm:h-2/3 relative'>
+            <div className='bg-racing-green rounded-xl p-1 border border-tan lg:h-2/3 md:w-3/4 sm:w-full sm:h-2/3'>
                 <img className='content-fit' src={convertedCarPicutre} alt={`${carDetails.Make} ${carDetails.Model}`}></img>
-                <button class="absolute top-2 right-2 bg-racing-green text-tan p-2 rounded-xl m-2 border border-tan transition duration-700 ease-in-out hover:opacity-60">Favourite</button>
+                {/* <button class="absolute top-2 right-2 bg-racing-green text-tan p-2 rounded-xl m-2 border border-tan transition duration-700 ease-in-out hover:opacity-60">Favourite</button> */}
             </div>
         </div>
         <div className='flex flex-col items-center pt-4'>

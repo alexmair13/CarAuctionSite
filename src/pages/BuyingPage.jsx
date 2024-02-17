@@ -36,7 +36,7 @@ export const BuyingPage = () => {
 
         return (
             <Link key={car.CarID} to={linkWithParams}> 
-                <ShortCarDetails image={convertedCarImg} carMake={car.Make} carModel={car.Model} endTime={Date.now() + timeDiff}/>    
+                <ShortCarDetails image={convertedCarImg} carMake={car.Make} carModel={car.Model} endTime={Date.now() + timeDiff} currentBid={car.WinningBid}/>    
             </Link>
         )
     });

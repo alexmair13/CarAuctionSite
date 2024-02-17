@@ -1,8 +1,18 @@
 import React from 'react';
 import axios from 'axios';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 export const SellingPage = () => {
+    const [cookies] = useCookies(['cookieName', 'cookieID']);
+    const SellerID = cookies.cookieID;
+    const navigate = useNavigate();
 
+    const handleRedirect = () => {
+      navigate('/loginPage');
+  };
+
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -13,7 +23,7 @@ export const SellingPage = () => {
           const CarID = response.data.CarID;
           console.log("Car ID is", CarID);
           
-          await axios.post('http://localhost:22502/startAuction/' + CarID);
+          await axios.post('http://localhost:22502/startAuction/' + CarID + "/" + SellerID);
           console.log('Car submitted successfully');
           alert("You have successfully listed your car!");
           document.getElementById("sellCarForm").reset();
@@ -24,7 +34,8 @@ export const SellingPage = () => {
 
     return (
         <>
-        <div className='flex flex-col items-center pt-4'>
+         {cookies.cookieName ? ( 
+         <div className='flex flex-col items-center pt-4'>
             <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-lg w-1/3"> 
                 Sell Your Car
             </h1>
@@ -46,7 +57,17 @@ export const SellingPage = () => {
                 <input type="text" name="description" id='description' className="w-full p-2 mb-2 rounded-md text-black" required/>
                 <button type="submit">Submit</button>
             </form>
-        </div>
+        </div> 
+        ) : (
+          <div className='flex flex-col items-center pt-4'>
+            <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-lg w-1/3 mb-4"> 
+                Login to Sell Your Car
+            </h1>
+               <button onClick={handleRedirect} className="bg-tan text-racing-green rounded-xl p-2 transition duration-700 ease-in-out hover:opacity-60">Click here to Login or Register</button>
+          </div>
+        )
+        }
+        
        
         </>
     );

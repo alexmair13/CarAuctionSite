@@ -2,12 +2,12 @@ import React from 'react';
 import ShortCarDetails from '../components/shortCarDetails';
 import { Link } from 'react-router-dom';
 
-export const FavouritesPage = () => {
+export const MyAuctionsPage = () => {
     return (
         <>
            <div className='flex flex-col items-center pt-4'>
                 <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-lg w-1/3"> 
-                    Favourites
+                    My Auctions
                 </h1>
             </div>
             <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 p-4'>

@@ -21,7 +21,7 @@ const NavBar = () => {
         <Link to="/sellingPage">Sell </Link>
       </li>
       <li>
-        <Link to="/favouritesPage">Favourites </Link>
+        <Link to="/myAuctionsPage">MyAuctions </Link>
       </li>
       <li>
         <Link to="/adminPage">Admin </Link>

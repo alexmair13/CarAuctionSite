@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { BuyingPage } from './pages/BuyingPage';
 import { SellingPage } from './pages/SellingPage';
-import { FavouritesPage } from './pages/FavouritesPage';
+import { MyAuctionsPage } from './pages/MyAuctionsPage';
 import { AdminPage } from './pages/AdminPage';
 import { FullCarDetailsPage } from './pages/FullCarDetailsPage';
 import { LoginPage } from './pages/LoginPage';
@@ -20,7 +20,7 @@ function App() {
           <Route index element={<LandingPage/>}/>
           <Route path="buyingPage" element={<BuyingPage/>}/>
           <Route path="sellingPage" element={<SellingPage/>}/>
-          <Route path="favouritesPage" element={<FavouritesPage/>}/>
+          <Route path="myAuctionsPage" element={<MyAuctionsPage/>}/>
           <Route path="adminPage" element={<AdminPage/>}/>
           <Route path="fullCarDetailsPage" element={<FullCarDetailsPage/>}/>
           <Route path="loginPage" element={<LoginPage/>}/>

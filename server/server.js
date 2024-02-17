@@ -64,7 +64,7 @@ app.listen(port, () => {
 });
 
 app.get('/auctions', (req, res)=> {
-    const sql = 'SELECT Auctions.StartDateTime, Auctions.EndDateTime, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
+    const sql = 'SELECT Auctions.StartDateTime, Auctions.EndDateTime, Auctions.WinningBid, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
     db.query(sql, (err, data)=> {
         if(err) {
             console.error('Error fetching auction and car details:', err);
@@ -132,8 +132,9 @@ app.get('/carDetails/:carID', (req, res) => {
     });
   });
 
-  app.post('/startAuction/:CarID', (req, res) => {
+  app.post('/startAuction/:CarID/:SellerID', (req, res) => {
     const CarID = req.params.CarID;
+    const SellerID = req.params.SellerID
     let startDateTime = new Date();
     let endDateTime = new Date();
 
@@ -144,8 +145,8 @@ app.get('/carDetails/:carID', (req, res) => {
     console.log("Start Date:", startDateTime);
     console.log("End Date:", endDateTime);
     
-    const sql = 'INSERT INTO Auctions (CarID, EndDateTime, StartDateTime, WinningBid) VALUES (?, ?, ?, ?)';
-    db.query(sql, [CarID , endDateTime, startDateTime, 0], (err, result) => {
+    const sql = 'INSERT INTO Auctions (CarID, EndDateTime, StartDateTime, WinningBid, SellerID) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [CarID , endDateTime, startDateTime, 0, SellerID], (err, result) => {
       if (err) {
         console.error('Error starting auction:', err);
         res.status(500).send('Internal Server Error');
