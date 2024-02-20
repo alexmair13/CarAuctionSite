@@ -64,7 +64,7 @@ app.listen(port, () => {
 });
 
 app.get('/auctions', (req, res)=> {
-    const sql = 'SELECT Auctions.StartDateTime, Auctions.EndDateTime, Auctions.WinningBid, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID';
+    const sql = 'SELECT Auctions.StartDateTime, Auctions.EndDateTime, Auctions.WinningBid, Auctions.WinningUserID, Auctions.SellerID, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID WHERE NOW() < Auctions.EndDateTime;';
     db.query(sql, (err, data)=> {
         if(err) {
             console.error('Error fetching auction and car details:', err);
@@ -80,6 +80,27 @@ app.get('/auctions', (req, res)=> {
             return res.json(data);
     })
 })
+
+app.get('/userBids/:userID', (req, res) => {
+  const userID = req.params.userID;
+  const sql = 'SELECT DISTINCT Auctions.*, Cars.*, Bids.* FROM Bids INNER JOIN Auctions ON Bids.auctionID = Auctions.auctionID INNER JOIN Cars ON Auctions.CarID = Cars.CarID WHERE Bids.UserID = ? AND (Bids.UserID, Bids.auctionID, Bids.BidDateTime) IN (SELECT UserID, auctionID, MAX(BidDateTime) FROM Bids WHERE UserID = ? GROUP BY UserID, auctionID)';
+  db.query(sql, [userID, userID], (err, data) => {
+    if(err) {
+      console.error('Error fetching auction and car details:', err);
+      res.status(500).send('Internal Server Error');
+    }
+      data.forEach((result) => {
+    
+        if (result.Picture) {
+          const base64Image = result.Picture.toString('base64');
+          result.Picture = base64Image;
+        }
+      });
+      return res.json(data);
+  });
+});
+
+
 
 app.get('/singleAuction/:carID', (req, res)=> {
   const carID = req.params.carID;
@@ -162,6 +183,32 @@ app.get('/carDetails/:carID', (req, res) => {
     const bid  = req.params.bid;
     const userID = req.params.userID;
 
+    const getAuctionIDSql = 'SELECT Auctions.AuctionID FROM Auctions WHERE Auctions.CarID = ?';
+    db.query(getAuctionIDSql, [carID], (err, auctionResult) => {
+        if (err) {
+            console.error('Error retrieving auctionID:', err);
+            res.status(500).send('Internal Server Error');
+            return;
+        } else {
+            if (auctionResult.length === 0) {
+                console.error('Auction not found for carID:', carID);
+                res.status(404).send('Auction not found');
+                return;
+            }
+
+            const auctionID = auctionResult[0].AuctionID;
+
+            const addBidSql = 'INSERT INTO Bids (AuctionID, BidDateTime, CurrentBid, UserID) VALUES (?, NOW(), ?, ?)';
+            db.query(addBidSql, [auctionID, bid, userID], (insertErr, insertResult) => {
+                if (insertErr) {
+                    console.error('Error inserting bid:', insertErr);
+                    res.status(500).send('Internal Server Error');
+                    return;
+                } else {
+                    console.log('Bid added to database');
+                }
+            });
+
     const sql = 'UPDATE Auctions SET WinningBid = ?, WinningUserID = ? WHERE CarID = ?';
     db.query(sql, [bid, userID, carID], (err, result) => {
       if (err) {
@@ -172,7 +219,9 @@ app.get('/carDetails/:carID', (req, res) => {
         res.status(200).json({ message: 'Bid placed'});
       }
     });
-  });
+}
+});
+});
 
   app.post('/register', (req, res) => {
     const {addressLine1, addressLine2, email, firstName, lastName, password, phoneNumber, postcode, townCity, username} = req.body;

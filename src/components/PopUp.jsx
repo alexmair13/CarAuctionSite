@@ -64,7 +64,7 @@ const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
           <h2 className='text-center text-xl pb-4'>
               Enter Bid Amount
           </h2>
-          <form id="placeBid" onSubmit={handleSubmit} action={'/placeBid/' + carID} method='post'>
+          <form id="placeBid" onSubmit={handleSubmit} action="/placeBid" method='post'>
                 <div className='flex justify-center items-center flex-col'>
                     <input type="number" name="bid" id='bid' min="100" max="100000000" className="w-2/3 p-2 mb-2 rounded-md text-black" required/>
                     <div className='flex justify-center'>
@@ -82,7 +82,7 @@ const PopUp = ({ openPopUp, closePopUp, carID, highestBid}) => {
     ) : (
       <div id='ModelContainer' onClick={handlelosePopUp} className='fixed inset-0 bg-black flex justify-center items-center bg-opacity-20 backdrop-blur-sm'>
         <div className='p-2 bg-racing-green w-10/12 md:w-1/2 lg:1/3 shadow-inner rounded-xl text-tan border border-tan'>
-          <div className='w-full p-3'>
+          <div className='w-full p-3 flex flex-col'>
             <h2 className='text-center text-xl pb-4'>
                 You must be logged in to place a bid
             </h2>
