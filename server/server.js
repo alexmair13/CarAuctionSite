@@ -144,6 +144,18 @@ app.get('/singleAuction/:carID', (req, res)=> {
   })
 })
 
+app.get('/userDetails/:userID', (req, res)=> {
+  const userID = req.params.userID;
+  const sql = 'SELECT * FROM Users WHERE UserID = ?';
+  db.query(sql, [userID],(err, data) => {
+      if(err) {
+          console.error('Error fetching auction details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+          res.status(200).json(data);
+  })
+})
+
 
 app.get('/carDetails/:carID', (req, res) => {
     const carID = req.params.carID;

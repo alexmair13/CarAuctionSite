@@ -165,7 +165,7 @@ export const MyAuctionsPage = () => {
         } else {
         return (
             <Link key={car.CarID} to={linkWithParams}> 
-                <ShortCarDetails image={convertedCarImg} carMake={car.Make} carModel={car.Model} endTime={Date.now() + timeDiff} currentBid={car.WinningBid}/>    
+                <ShortCarDetails image={convertedCarImg} carMake={car.Make} carModel={car.Model} currentBid={car.WinningBid}/>    
             </Link>
         )
         }
@@ -180,7 +180,7 @@ export const MyAuctionsPage = () => {
         {cookies.cookieName ? ( 
             <>
            <div className='flex flex-col items-center pt-4'>
-                <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-lg w-1/3"> 
+                <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-2xl w-1/3"> 
                     My Auctions
                 </h1>
             </div>
