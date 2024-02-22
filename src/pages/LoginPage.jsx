@@ -17,6 +17,8 @@ export const LoginPage = () => {
     
         try {
           await axios.post('http://localhost:22502/register', formData);
+          alert("You have successfully created an account");
+          location.reload();
         } catch (error) {
           console.error('Error submitting user info:', error);
         }

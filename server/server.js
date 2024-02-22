@@ -100,6 +100,36 @@ app.get('/userBids/:userID', (req, res) => {
   });
 });
 
+app.get('/endedSoldAuctions', (req, res) => {
+  const sql = 'SELECT Auctions.StartDateTime, Auctions.EndDateTime, Auctions.WinningBid, Auctions.WinningUserID, Auctions.SellerID, Cars.CarID, Cars.Make, Cars.Model, Cars.Picture AS Picture FROM Auctions JOIN Cars ON Auctions.CarID = Cars.CarID WHERE NOW() > Auctions.EndDateTime;';
+  db.query(sql, (err, data) => {
+    if(err) {
+      console.error('Error fetching auction and car details:', err);
+      res.status(500).send('Internal Server Error');
+    }
+      data.forEach((result) => {
+    
+        if (result.Picture) {
+          const base64Image = result.Picture.toString('base64');
+          result.Picture = base64Image;
+        }
+      });
+      return res.json(data);
+  });
+});
+
+app.get('/sellerDetails/:AuctionID', (req, res)=> {
+  const auctionID = req.params.AuctionID;
+  const sql = 'SELECT Auctions.*, Users.* FROM Auctions JOIN Users ON Auctions.SellerID = Users.userID WHERE AuctionID = ?;';
+  db.query(sql, [auctionID],(err, data) => {
+      if(err) {
+          console.error('Error fetching auction details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+          res.status(200).json(data);
+  })
+})
+
 
 
 app.get('/singleAuction/:carID', (req, res)=> {

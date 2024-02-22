@@ -15,6 +15,7 @@ export const FullCarDetailsPage = () =>  {
 
     const urlParams = new URLSearchParams(window.location.search);
     const carID = urlParams.get('carID');
+    const won = urlParams.get('won');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,8 +42,20 @@ const auctionTimer = singleAuctionDetails.map((auction, index) => {
     const diff = date2 - date1;
 
     const renderer = ({days, hours, minutes, seconds, completed }) => {
-        if (completed) {
-          
+        if (completed && won === 'true') {
+          return (
+            <div className='flex flex-col items-center pt-4' key={auction.CarID}>
+                    <div>
+                        <p className='bg-white text-red-600 border rounded-xl p-2'>
+                        Auction Ended
+                        </p>
+                        <p className='bg-white text-red-600 border rounded-xl p-2'>
+                          You won the auction!
+                        </p>
+                    </div>
+                </div>
+          );
+        } else if(completed) {
           return (
             <div className='flex flex-col items-center pt-4' key={auction.CarID}>
                     <div>
