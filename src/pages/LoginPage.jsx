@@ -16,18 +16,25 @@ export const LoginPage = () => {
         const formData = new FormData(e.target);
     
         try {
-          await axios.post('http://localhost:22502/register', formData);
-          alert("You have successfully created an account");
-          location.reload();
-        } catch (error) {
-          console.error('Error submitting user info:', error);
-        }
+          const response = await axios.post('http://localhost:22502/register', formData);
+          if (response.status === 200) {
+              alert("You have successfully created an account");
+              location.reload();
+          }
+      } catch (error) {
+          if (error.response.status === 400) {
+              alert(error.response.data.message);
+          } else {
+              console.error('Error submitting user info:', error);
+          }
+      }
       };
 
       const handleRemove = async (e) => {
         e.preventDefault();
         removeCookie('cookieName');
         removeCookie('cookieID');
+        removeCookie('cookieAdmin');
       }
 
       const handleLogin = async (e) => {
@@ -41,6 +48,7 @@ export const LoginPage = () => {
             if(res.data.login) {
                 setCookie('cookieName', res.data.username);
                 setCookie('cookieID', res.data.userID);
+                setCookie('cookieAdmin', res.data.admin);
                 navigate('/')
             } else {
                 alert("Problem logging in")
@@ -94,7 +102,7 @@ export const LoginPage = () => {
                             <label>Email:</label>
                             <input type="email" name="email" id='email' className="w-full p-2 mb-2 rounded-md text-black" required/>
                             <label>Phone Number:</label>
-                            <input type="text" name="phoneNumber" id='phoneNumber' className="w-full p-2 mb-2 rounded-md text-black" required/>
+                            <input type="tel" name="phoneNumber" id='phoneNumber' pattern="0\d{10}" title="Please enter a valid phone number starting with 0 and 11 digits long" className="w-full p-2 mb-2 rounded-md text-black" required/>
                             <label>Address Line 1:</label>
                             <input type="text" name="addressLine1" id='addressLine1' className="w-full p-2 mb-2 rounded-md text-black" required/>
                             <label>Address Line 2:</label>

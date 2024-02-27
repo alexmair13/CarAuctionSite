@@ -268,13 +268,23 @@ app.get('/carDetails/:carID', (req, res) => {
   app.post('/register', (req, res) => {
     const {addressLine1, addressLine2, email, firstName, lastName, password, phoneNumber, postcode, townCity, username} = req.body;
     
-    
+    db.query('SELECT * FROM Users WHERE Username = ?', [username], (err, rows) => {
+      if (err) {
+          console.error('Error checking username in database:', err);
+          res.status(500).send('Internal Server Error');
+      } else {
+          if (rows.length > 0) {
+              // Username already exists, send feedback to the user
+              res.status(400).json({ message: 'Username already exists' });
+              return;
+          } else {
+
     bcrypt.hash(password, 10, function(err, hash) {
       if(err) {
         console.log("Error hashing password ", err);
       } else {
-        const sql = 'INSERT INTO Users (AddressLine1, AddressLine2, Email, FirstName, LastName, Password, PhoneNumber, PostCode, TownCity, Username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        db.query(sql, [addressLine1, addressLine2, email, firstName, lastName, hash, phoneNumber, postcode, townCity, username], (err, result) => {
+        const sql = 'INSERT INTO Users (AddressLine1, AddressLine2, Email, FirstName, LastName, Password, PhoneNumber, PostCode, TownCity, Username, Admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        db.query(sql, [addressLine1, addressLine2, email, firstName, lastName, hash, phoneNumber, postcode, townCity, username, 0], (err, result) => {
           if (err) {
             console.error('Error inserting into database:', err);
             res.status(500).send('Internal Server Error');
@@ -284,7 +294,10 @@ app.get('/carDetails/:carID', (req, res) => {
         });
       }
     });
+  }
+}
   });
+    });
 
 // https://medium.com/@prashantramnyc/node-js-with-passport-authentication-simplified-76ca65ee91e5
 
@@ -299,13 +312,20 @@ app.get('/carDetails/:carID', (req, res) => {
         return;
       }
       const user = data[0]
+      const isAdminBuffer = user.Admin;
+      let isAdminBoolean;
+      if (isAdminBuffer && isAdminBuffer.length > 0) {
+          isAdminBoolean = isAdminBuffer[0] === 1;
+      } else {
+          isAdminBoolean = false; // Default value if isAdminBuffer is not valid
+      }
 
         bcrypt.compare(password, user.Password, function(err, result) {
           if (result) {
-            console.log(`Value of "User" in authUser function ----> ${username}`)         //passport will populate, user = req.body.username
+            console.log(`Value of "User" in authUser function ----> ${username}`)        
             console.log(`Value of "Password" in authUser function ----> ${password}`)
               console.log("Password matched, user found");
-              let authenticated_user = {id: user.UserID, name: user.Username}
+              let authenticated_user = {id: user.UserID, name: user.Username, isAdmin: isAdminBoolean}
               console.log("User is: ", authenticated_user);
               return done (null, authenticated_user)
           } else {
@@ -339,18 +359,17 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-
-
   app.post('/login', passport.authenticate('local'), (req, res) =>{
     if(req.user) {
-      console.log("please work: ", req.user.name);
       req.session.user = req.user.name;
       req.session.userid = req.user.id;
+      req.session.admin = req.user.isAdmin;
       res.status(200).json({ 
         login: true,
         message: 'Logged In',
         username: req.session.user,
-        userID: req.session.userid
+        userID: req.session.userid,
+        admin: req.session.admin
       });
     } else {
       res.status(500).json({
