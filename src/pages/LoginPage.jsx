@@ -43,23 +43,23 @@ export const LoginPage = () => {
         const loginFormData = new FormData(e.target);
     
         try {
-          await axios.post('http://localhost:22502/login', loginFormData)
-          .then(res => {
-            if(res.data.login) {
-                setCookie('cookieName', res.data.username);
-                setCookie('cookieID', res.data.userID);
-                setCookie('cookieAdmin', res.data.admin);
-                navigate('/')
-            } else {
-                alert("Problem logging in")
-            }
-            console.log(res)
-            
-          })
-        } catch (error) {
+          const response = await axios.post('http://localhost:22502/login', loginFormData);
+          const responseData = response.data;
+
+          if (responseData.login) {
+              setCookie('cookieName', responseData.username);
+              setCookie('cookieID', responseData.userID);
+              setCookie('cookieAdmin', responseData.admin);
+              navigate('/');
+          }
+      } catch (error) {
+        if (error.response.status === 401) {
+          alert("Incorrect username or password");
+      } else {
           console.error('Error submitting user info:', error);
-        }
-      };
+      }
+      }
+  };
 
     return (
         <>

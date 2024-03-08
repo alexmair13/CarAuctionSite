@@ -10,7 +10,7 @@ const ShortCarDetails = ({image, carMake, carModel, currentBid, endTime}) => {
             <p className="absolute top-2 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-md"> 
                 {carMake} {carModel}
             </p>
-            <p className="absolute bottom-2 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-sm"> 
+            <p className="absolute bottom-2 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-md"> 
                 £{currentBid}
             </p>
         </div>
@@ -22,7 +22,7 @@ const ShortCarDetails = ({image, carMake, carModel, currentBid, endTime}) => {
             <p className="absolute top-2 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-md"> 
                 {carMake} {carModel}
             </p>
-            <p className="absolute bottom-2 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-sm"> 
+            <p className="absolute bottom-2 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-md"> 
                 £{currentBid} <Countdown date={endTime} />
             </p>
         </div>

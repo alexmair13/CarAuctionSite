@@ -309,7 +309,7 @@ app.get('/carDetails/:carID', (req, res) => {
       }
       if (data.length === 0) {
         console.log("User not found");
-        return;
+        return done(null, false, { message: 'User not found' });
       }
       const user = data[0]
       const isAdminBuffer = user.Admin;
@@ -330,7 +330,7 @@ app.get('/carDetails/:carID', (req, res) => {
               return done (null, authenticated_user)
           } else {
             console.log("Passwords don't match");
-            return;
+            return done(null, false, { message: 'Password incorrect' });
           }
         });
   })
@@ -372,9 +372,9 @@ passport.deserializeUser((id, done) => {
         admin: req.session.admin
       });
     } else {
-      res.status(500).json({
+      res.status(401).json({
         login: false,
-        message: 'failed',
+        message: "Incorrect password or username",
         user: null
       })
     }
@@ -386,3 +386,55 @@ passport.deserializeUser((id, done) => {
     console.log(`-------> User Logged out`)
  })
  
+ // Admin tables to show all data
+
+ app.get('/allAuctions', (req, res)=> {
+  const sql = 'SELECT * FROM Auctions;';
+  db.query(sql, (err, data)=> {
+      if(err) {
+          console.error('Error auction details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+          return res.json(data);
+  })
+})
+
+app.get('/allUsers', (req, res)=> {
+  const sql = 'SELECT * FROM Users;';
+  db.query(sql, (err, data)=> {
+      if(err) {
+          console.error('Error fetching user details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+          return res.json(data);
+  })
+})
+
+app.get('/allBids', (req, res)=> {
+  const sql = 'SELECT * FROM Bids;';
+  db.query(sql, (err, data)=> {
+      if(err) {
+          console.error('Error fetching bid details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+          return res.json(data);
+  })
+})
+
+app.get('/allCars', (req, res)=> {
+  const sql = 'SELECT * FROM Cars';
+  db.query(sql, (err, data)=> {
+      if(err) {
+          console.error('Error fetching car details:', err);
+          res.status(500).send('Internal Server Error');
+      }
+      data.forEach((result) => {
+        
+        if (result.Picture) {
+          const base64Image = result.Picture.toString('base64');
+          result.Picture = base64Image;
+        }
+      });
+          return res.json(data);
+  })
+})

@@ -4,7 +4,7 @@ const HomePageCard = ({text, image}) => {
     return (
         <div className={style}>
             <img className="opacity-75" src={image}></img>
-            <button className="absolute bottom-12 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan"> 
+            <button className="absolute bottom-12 bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-xl"> 
                 {text}
             </button>
         </div>
