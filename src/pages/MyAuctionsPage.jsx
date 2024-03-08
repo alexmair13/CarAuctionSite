@@ -158,7 +158,6 @@ export const MyAuctionsPage = () => {
         
         const date1 = new Date();
         const date2 = new Date(car.EndDateTime);
-        const timeDiff = date2 - date1
         
         if(userID != car.SellerID) {
             return;
@@ -180,7 +179,7 @@ export const MyAuctionsPage = () => {
         {cookies.cookieName ? ( 
             <>
            <div className='flex flex-col items-center pt-4'>
-                <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-2xl w-1/3"> 
+                <h1 className="flex flex-col items-center bg-racing-green text-tan p-2 overflow-hidden rounded-xl border border-tan text-xl w-1/3"> 
                     My Auctions
                 </h1>
             </div>
