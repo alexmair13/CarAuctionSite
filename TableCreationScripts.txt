@@ -1,0 +1,49 @@
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    Username VARCHAR(255) UNIQUE,
+    Password VARCHAR(255),
+    FirstName VARCHAR(255),
+    LastName VARCHAR(255),
+    Email VARCHAR(255),
+    AddressLine1 VARCHAR(255),
+    AddressLine2 VARCHAR(255),
+    Postcode VARCHAR(255),
+    TownCity VARCHAR(255),
+    Admin BIT,
+    PhoneNumber VARCHAR(20)
+);
+
+CREATE TABLE Cars (
+    CarID INT PRIMARY KEY,
+    Make VARCHAR(255),
+    Model VARCHAR(255),
+    Year INT,
+    Color VARCHAR(255),
+    Mileage INT,
+    Description TEXT,
+    Picture LONGBLOB
+);
+
+CREATE TABLE Auctions (
+    AuctionID INT PRIMARY KEY,
+    CarID INT,
+    StartDateTime DATETIME,
+    EndDateTime DATETIME,
+    ReservePrice DECIMAL(10, 2),
+    WinningBid DECIMAL(10, 2),
+    WinnerUserID INT,
+    SellerID INT,
+    FOREIGN KEY (CarID) REFERENCES Cars(CarID),
+    FOREIGN KEY (WinnerUserID) REFERENCES Users(UserID),
+    FOREIGN KEY (SellerID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE Bids (
+    BidID INT PRIMARY KEY,
+    AuctionID INT,
+    UserID INT,
+    BidDateTime DATETIME,
+    CurrentBid DECIMAL(10, 2),
+    FOREIGN KEY (AuctionID) REFERENCES Auctions(AuctionID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
