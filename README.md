@@ -13,10 +13,10 @@
 1. Open terminal and navigate to the directory you want to clone the repo into
 2. Clone the repo: ``` git clone https://github.com/alexmair13/CarAuctionSite```
 
-Step 4 - Install Dependencies
+**Step 4 - Install Dependencies**
 1. To install the required dependencies use: ```npm install```
 
-Step 5 - Configure Environment Variables
+**Step 5 - Configure Environment Variables**
 1. Make a .env file in the project's root directory
 2. Edit the .env file to include: ```DB_HOST=localhost
 DB_USER=root
@@ -24,6 +24,6 @@ DB_PASSWORD=your_mysql_password
 DB_DATABASE=auction ```
 where your_mysql_passsord is the password for your mysql user.
 
-Step 6 - Run the Site
+**Step 6 - Run the Site**
 1. In the terminal to run the server and front end app at the same time use: ```npm run dev```
 
