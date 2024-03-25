@@ -5,6 +5,8 @@
 2. Follow the installation process to setup MySQL
 3. Install a database management tool such as MySQL Workbench from here: https://dev.mysql.com/downloads/workbench/ or Valentina studio from here: https://valentina-db.com/en/studio/download
 4. Run the table creation scripts from TableCreationScripts.txt in the git repo: https://github.com/alexmair13/CarAuctionSite
+5. Note that for creating an admin account it has to be set manually in the database by changing the admin field to a 1
+6. Sample image are provided in the TestingImages folder, these are all copyright free
 
 **Step 2 - Install Node.js**
 1. Download and install Node.js from here: https://nodejs.org/en/download
